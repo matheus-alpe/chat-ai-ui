@@ -1,13 +1,14 @@
 import { Component, effect, ElementRef, inject, signal, viewChild } from '@angular/core';
-import { ChatService } from '../chat-service';
-import { ChatResponse } from '../chat-response';
+import { ChatResponse, ChatService } from '../services/chat-service';
 import { finalize } from 'rxjs';
 import { CardModule } from 'primeng/card';
 import { ToolbarModule } from 'primeng/toolbar';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { FloatLabelModule } from 'primeng/floatlabel';
+import { AutoFocusModule } from 'primeng/autofocus';
+import { Message } from './components/message/message';
+import { ChatStrategyStore } from '../stores/chat-strategy-store';
 
 @Component({
   selector: 'app-simple-chat',
@@ -17,7 +18,8 @@ import { FloatLabelModule } from 'primeng/floatlabel';
     FormsModule,
     ButtonModule,
     InputTextModule,
-    FloatLabelModule,
+    AutoFocusModule,
+    Message,
   ],
   templateUrl: './simple-chat.html',
   styleUrl: './simple-chat.css',
@@ -25,24 +27,26 @@ import { FloatLabelModule } from 'primeng/floatlabel';
 export class SimpleChat {
   private readonly chatHistory = viewChild.required<ElementRef>('chatHistory');
   private readonly chatService = inject(ChatService);
-  private readonly local = true;
+  private readonly chatStrategyStore = inject(ChatStrategyStore);
 
   userInput = '';
   isLoading = false;
 
   messages = signal<ChatResponse[]>([{ message: 'Hello, how can I help you today?', isBot: true }]);
 
-  private readonly autoScrollEffect = effect(() => {
-    this.messages();
-    setTimeout(() => this.scrollToBottom(), 10);
-  });
+  constructor() {
+    effect(() => {
+      this.messages();
+      setTimeout(() => this.scrollToBottom(), 10);
+    });
+  }
 
   sendMessage() {
     this.trimUserMessage();
     if (!this.userInput || this.isLoading) return;
     this.updateMessages(this.userInput);
     this.isLoading = true;
-    if (this.local) {
+    if (this.chatStrategyStore.isLocal()) {
       this.simulateResponse();
     } else {
       this.sendChatMessage();

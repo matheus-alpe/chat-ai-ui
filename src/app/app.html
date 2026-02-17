@@ -1,6 +1,11 @@
 <p-toolbar>
-  <span class="title"></span>
   <p-button label="Simple Chat" routerLink="/simple-chat" ariaLabel="Simple Chat" />
+  <p-selectbutton
+    [options]="chatStrategyStore.options"
+    [(ngModel)]="chatStrategyStore.strategy"
+    optionLabel="label"
+    ariaLabel="Chat Options"
+  />
 </p-toolbar>
 
 <router-outlet />

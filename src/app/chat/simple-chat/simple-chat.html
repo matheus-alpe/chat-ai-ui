@@ -1,42 +1,40 @@
-<p-card>
-  <div class="chat-header">
-    <p-toolbar>
-      <span>Simple Chat</span>
-    </p-toolbar>
+<div class="chat-container rounded-2xl flex flex-col mx-8 my-12">
+  <div class="chat-history flex-1 p-2.5 overflow-y-scroll" #chatHistory>
+    @for (message of messages(); track message) {
+      <app-message [alignRight]="!message.isBot">
+        @if (message.isBot) {
+          <i class="pi pi-sparkles mr-2"></i>
+        }
+
+        {{ message.message }}
+      </app-message>
+    }
+
+    @if (isLoading) {
+      <app-message>
+        <span class="typing">...</span>
+      </app-message>
+    }
   </div>
 
-  <div class="chat-history" #chatHistory>
-    <div class="messages">
-      @for (message of messages(); track message) {
-        <div class="message">
-          <div class="message-bubble" [class.user]="!message.isBot">
-            {{ message.message }}
-          </div>
-        </div>
-      }
+  <form class="chat-input flex items-center gap-2 relative" (submit)="sendMessage()">
+    <input
+      name="user-input"
+      type="text"
+      class="w-full pr-10!"
+      pInputText
+      [pAutoFocus]="true"
+      [(ngModel)]="userInput"
+    />
 
-      @if (isLoading) {
-        <div class="message">
-          <div class="message-bubble">
-            <span class="typing">...</span>
-          </div>
-        </div>
-      }
-    </div>
-  </div>
-
-  <div class="chat-input">
-    <form (submit)="sendMessage()">
-      <p-floatLabel>
-        <input name="message" type="text" [(ngModel)]="userInput" required />
-        <label for="message">Type your message...</label>
-      </p-floatLabel>
-
-      @if (userInput) {
-        <p-button type="submit" ariaLabel="Send" [disabled]="isLoading">
-          <i class="pi pi-send"></i>
-        </p-button>
-      }
-    </form>
-  </div>
-</p-card>
+    <p-button
+      type="submit"
+      ariaLabel="Send"
+      variant="text"
+      [disabled]="isLoading"
+      class="absolute right-2.5"
+    >
+      <i class="pi pi-send"></i>
+    </p-button>
+  </form>
+</div>
