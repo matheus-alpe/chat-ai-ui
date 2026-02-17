@@ -1,0 +1,42 @@
+<p-card>
+  <div class="chat-header">
+    <p-toolbar>
+      <span>Simple Chat</span>
+    </p-toolbar>
+  </div>
+
+  <div class="chat-history" #chatHistory>
+    <div class="messages">
+      @for (message of messages(); track message) {
+        <div class="message">
+          <div class="message-bubble" [class.user]="!message.isBot">
+            {{ message.message }}
+          </div>
+        </div>
+      }
+
+      @if (isLoading) {
+        <div class="message">
+          <div class="message-bubble">
+            <span class="typing">...</span>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="chat-input">
+    <form (submit)="sendMessage()">
+      <p-floatLabel>
+        <input name="message" type="text" [(ngModel)]="userInput" required />
+        <label for="message">Type your message...</label>
+      </p-floatLabel>
+
+      @if (userInput) {
+        <p-button type="submit" ariaLabel="Send" [disabled]="isLoading">
+          <i class="pi pi-send"></i>
+        </p-button>
+      }
+    </form>
+  </div>
+</p-card>
