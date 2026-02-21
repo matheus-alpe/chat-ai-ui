@@ -1,0 +1,43 @@
+<p-toolbar>
+  <p-button
+    ariaLabel="Chat History"
+    icon="pi pi-history"
+    (onClick)="isDrawerVisible = !isDrawerVisible"
+    severity="contrast"
+  />
+
+  <p-button label="New Chat" icon="pi pi-plus" iconPos="right" (onClick)="createNewChat()" />
+</p-toolbar>
+
+<p-drawer [(visible)]="isDrawerVisible" position="left">
+  <ul>
+    @if (chats.isLoading()) {
+      <li>
+        <i class="pi pi-spin pi-spinner"></i>
+      </li>
+    } @else if (chats.status() === 'error') {
+      <li>error loading chats</li>
+    } @else if (chats.status() === 'resolved' && chats.hasValue()) {
+      @for (chat of chats.value(); track chat.id) {
+        <li
+          tabindex="0"
+          (click)="selectChat(chat.id)"
+          (keyup)="selectChat(chat.id)"
+          class="cursor-pointer p-2 rounded-md flex justify-between items-center outline outline-zinc-700 hover:outline-zinc-600"
+          [ngClass]="{
+            'outline-zinc-400!': chat.id === memoryChatService.selectedChatId(),
+          }"
+        >
+          <span>{{ chat.description }}</span>
+          <p-button
+            icon="pi pi-trash"
+            (onClick)="deleteChat(chat.id, $event)"
+            severity="secondary"
+          />
+        </li>
+      } @empty {
+        <li>No chats available</li>
+      }
+    }
+  </ul>
+</p-drawer>

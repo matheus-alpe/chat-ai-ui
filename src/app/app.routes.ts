@@ -3,15 +3,16 @@ import { Routes } from '@angular/router';
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'simple-chat',
+    redirectTo: 'memory-chat',
     pathMatch: 'full',
   },
   {
-    path: 'simple-chat',
-    loadComponent: () => import('./chat/simple-chat/simple-chat').then((m) => m.SimpleChat),
+    path: 'memory-chat',
+    loadComponent: () =>
+      import('./chat/memory-chat/chat-panel/chat-panel').then((m) => m.ChatPanel),
   },
   {
     path: '**',
-    redirectTo: 'simple-chat',
+    redirectTo: 'memory-chat',
   },
 ];

@@ -1,0 +1,45 @@
+<div class="chat-panel">
+  @if (memoryChatService.selectedChatId() || messages().length > 0) {
+    <div class="chat-messages" #chatHistory>
+      @for (message of messages(); track $index) {
+        <div
+          class="message"
+          [class.ai-message]="message.type === 'ASSISTANT'"
+          [class.user-message]="message.type === 'USER'"
+        >
+          <p-card class="message-content">
+            <div [innerHTML]="message.content | markdownToHtml"></div>
+          </p-card>
+        </div>
+      }
+
+      @if (isLoading) {
+        <div class="loading-indicator">
+          <i class="pi pi-spin pi-spinner"></i>
+          <span>AI is thinking...</span>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="welcome-message">
+      <h3>Welcome to AI Chat with Memory</h3>
+      <p>Start a new conversation or select an existing chat from the sidebar.</p>
+    </div>
+  }
+
+  <div class="flex justify-center items-center gap-2 mt-4 mx-auto w-1/2">
+    <input
+      pInputText
+      [(ngModel)]="userInput"
+      (keypress)="onKeyPress($event)"
+      [disabled]="isLoading"
+      placeholder="Type your message here..."
+      type="text"
+      class="w-full outline-0 border-0"
+    />
+
+    <p-button (click)="sendMessage()" [disabled]="isDisabled()" variant="text">
+      <i class="pi pi-send"></i>
+    </p-button>
+  </div>
+</div>
